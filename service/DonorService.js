@@ -68,6 +68,55 @@ exports.addDonor = (name, phoneNumber, address, dateOfBirth, gender, bloodType, 
     })
 }
 
+exports.getAllDonors = () => {
+    return new Promise((resolve, reject)=>{
+        const donorsQuery = 'select * from donors'
+        pool.query(donorsQuery, (err, result)=>{
+            if(err){
+                return reject(err)
+            }
+            if(result.length == 0){
+                return reject({
+                    success : false,
+                    message : 'No donors found'
+                })
+            }
 
-exports.getAllDonors = () => ({ msg: "test all" });
-exports.getDonorById = () => ({ msg: "test" });
+            if(result.length > 0){
+                  return resolve({
+                    success : true,
+                     donors : result
+                  })
+            }
+        })
+    })
+}
+
+exports.getDonorById = (donorId) => {
+    return new Promise((resolve, reject) => {
+        if (!donorId) {
+            return reject({
+                success: false,
+                message: 'ID params is missing'
+            })
+        }
+        const doctorQuery = 'select * from donors where donor_id = ?'
+        pool.query(doctorQuery, [donorId], (err, result) => {
+            if (err) {
+                return reject(err)
+            }
+            if (result.length == 0) {
+                return reject({
+                    success: false,
+                    message: `Donor not found with ID: ${donorId}`
+                })
+            }
+            if (result.length > 0) {
+                return resolve({
+                    success: true,
+                    data: result
+                })
+            }
+        })
+    })
+}

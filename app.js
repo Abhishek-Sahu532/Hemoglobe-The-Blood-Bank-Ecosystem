@@ -7,6 +7,7 @@ const BloodBagController = require("./controller/BloodBagController");
 const BloodUsageController = require("./controller/BloodusageController");
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 app.use("/donors", DonorController);
 app.use("/donations", DonationController);
 app.use("/bloodbags", BloodBagController);

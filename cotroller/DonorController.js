@@ -21,11 +21,38 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let result = await DonorService.getAllDonors();
-  res.send(result);
+  try {
+    let result = await DonorService.getAllDonors();
+    if (!result.success) {
+      return res.status(400).json(result)
+    }
+    return res.status(200).json(result)
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+
 });
+
+
 router.get("/:donorId", async (req, res) => {
-  let result = await DonorService.getDonorById();
-  res.send(result);
+  try {
+    const {donorId}  = req.params
+    let result = await DonorService.getDonorById(donorId);
+ if(!result.success){
+  return res.status(400).json(result)
+ }
+ return res.status(200).json(result)
+  } catch (error) {
+    return res.status(500).json({
+      success : false,
+      message : error.message
+    })
+  }
+ 
 });
+
+
 module.exports = router;
