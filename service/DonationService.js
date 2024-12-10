@@ -159,4 +159,48 @@ exports.getAllDonations = () => {
     })
 }
 
-exports.getDonationHistory = () => ({ msg: "test" });
+exports.getDonationHistory = (donorId) => {
+    return new Promise((resolve, reject) => {
+        if (!donorId) {
+            return reject({
+                success: false,
+                message: 'Donor ID is missing'
+            })
+        }
+
+        const donorQuery = 'select * from donors where donor_id = ?'
+        pool.query(donorQuery, [donorId], (donorErr, donorResult) => {
+            if (donorErr) {
+                return reject(donorErr)
+            }
+            if (donorResult.length == 0) {
+                return reject({
+                    success: false,
+                    message: `The donor is not found for the given id ${donorId}`
+                })
+            }
+            if (donorResult.length > 0) {
+                const donotionQuery = 'select * from donations where donor_id = ?'
+                pool.query(donotionQuery, [donorId], (donoationErr, donationResult) => {
+                    if (donoationErr) {
+                        return reject(donoationErr)
+                    }
+                    if (donationResult.length == 0) {
+                        return reject({
+                            success: false,
+                            message: `The donation is not found for the given id ${donorId}`
+                        })
+                    }
+
+                    if (donationResult.length > 0) {
+                        return resolve({
+                            success: true,
+                            donationResult
+                        })
+                    }
+                })
+
+            }
+        })
+    })
+}

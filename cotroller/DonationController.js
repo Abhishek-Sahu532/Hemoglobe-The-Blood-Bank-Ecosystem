@@ -32,10 +32,18 @@ router.get("/all", async (req, res) => {
       message : error.message
     })
   }
- 
 });
+
 router.get("/history/:donorId", async (req, res) => {
-  let result = await DonationService.getDonationHistory();
-  res.send(result);
+  try {
+    const { donorId } = req.params
+    let result = await DonationService.getDonationHistory(donorId);
+    return res.status(result.success ? 200 : 400).json(result)
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
 });
 module.exports = router;
