@@ -4,7 +4,16 @@ const BloodBagService = require("../service/BloodBagService");
 
 
 router.get("/all", async (req, res) => {
-  let result = await BloodBagService.getAllBloodBags();
-  res.send(result);
+  try {
+    let result = await BloodBagService.getAllBloodBags();
+    return res.status(result?.success ? 200 : 400).json(result)
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
 });
+
+
 module.exports = router;
