@@ -3,8 +3,20 @@ const router = express.Router();
 const DonationService = require("../service/DonationService");
 
 router.post("/add", async (req, res) => {
-  let result = await DonationService.addDonation();
-  res.send(result);
+  try {
+    const {donorId, qty} = req.body
+    let result = await DonationService.addDonation(donorId, qty);
+    if (!result.success) {
+      return res.status(400).json(result)
+    }
+    return res.status(200).json(result)
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error?.message
+    })
+  }
+
 });
 router.get("/all", async (req, res) => {
   let result = await DonationService.getAllDonations();
