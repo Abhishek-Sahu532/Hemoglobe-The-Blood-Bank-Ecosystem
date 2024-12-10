@@ -134,5 +134,29 @@ exports.addDonation = (donorId, qty) => {
         })
     })
 }
-exports.getAllDonations = () => ({ msg: "test all" });
+
+
+exports.getAllDonations = () => {
+    return new Promise((resolve, reject) => {
+        const query = 'select * from donations'
+        pool.query(query, (err, result) => {
+            if (err) {
+                return reject(err)
+            }
+            if (result.length == 0) {
+                return reject({
+                    success: false,
+                    message: 'No donor was found'
+                })
+            }
+            if (result.length > 0) {
+                return resolve({
+                    success: true,
+                    result
+                })
+            }
+        })
+    })
+}
+
 exports.getDonationHistory = () => ({ msg: "test" });
